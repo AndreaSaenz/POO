@@ -16,7 +16,7 @@ public class Level {
     
 //Contructor dos parametros
 public Level(Room rooms[], String name){
-        this.roomCounter = rooms.length;
+        this.roomCounter = getCounterRooms(rooms);
         this.rooms = rooms;
         this.name = name;
     }
@@ -27,6 +27,19 @@ public Level(String name){
         this.roomCounter = 0;
         this.rooms = new Room[MAXROOMS];
     }
+
+public int getCounterRooms(Room rooms[]){
+    int roomCounter = 0;
+    for(int i = 0;i < rooms.length; i++){
+        if(rooms[i] != null){
+            roomCounter++;
+        }
+        else{
+            break;
+        }
+    }
+    return roomCounter;
+}
 
 public boolean addRoom(Room room){
     boolean flag = false;
@@ -139,5 +152,82 @@ public boolean addRoom(Room room){
         }
         return output;
     }
+    
+    public boolean switchAllOffRooms(){
+        for(int index=0; index<getRoomCounter(); index++){
+            rooms[index].switchOffAllDevices();
+        }
+        return true;
+    }
+    
+    public boolean switchAllOnRooms(){
+        for(int index=0; index<getRoomCounter(); index++){
+            rooms[index].switchOnAllDevices();
+        }
+        return true;
+    }
+    
+    public boolean switchOnRoom(Room room){
+        boolean flag=false;
+        int index;
+        index=this.searchRoom(room);
+        if(index>-1){
+            rooms[index].switchOnAllDevices();
+            flag=true;
+        }
+        return flag;
+    }
 
+    public boolean switchOffRoom(Room room){
+        boolean flag=false;
+        int index;
+        index=this.searchRoom(room);
+        if(index>-1){
+            rooms[index].switchOffAllDevices();
+            flag=true;
+        }
+        return flag;
+    }
+    public boolean levelSwitchOffDevice(Room room, Device device){
+       boolean found = false;
+       int lRoom = this.searchRoom(room);
+       if(lRoom > -1){
+           Device d[];
+            d = rooms[lRoom].getDevices();
+            int lDevice = rooms[lRoom].searchDevice(device);
+            
+            if(lDevice > -1)
+                d[lDevice].switchOffDevice();
+            else
+                found = true;
+       }
+       return found;
+    }
+    
+    public boolean levelSwitchOnDevice(Room room, Device device){
+       boolean found = false;
+       int lRoom = this.searchRoom(room);
+       if(lRoom > -1){
+           Device d[];
+            d = rooms[lRoom].getDevices();
+            int lDevice = rooms[lRoom].searchDevice(device);
+            
+            if(lDevice > -1)
+                d[lDevice].switchOnDevice();
+            else
+                found = true;
+       }
+       return found;
+    }
+    
+    public void switchAllOffSameDevices(String nameDevices){//Nuevo
+      for(int i=0; i<roomCounter; i++){
+          Device []devices = rooms[i].getDevices();
+          for(int j=0; j<rooms[i].getDeviceCounter(); j++){
+              if(devices[j].getName().equals(nameDevices)){
+                  devices[j].switchOffDevice();
+              }
+          }
+      }          
+  }
 }
